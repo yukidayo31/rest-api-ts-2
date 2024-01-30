@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const body_parser_1 = __importDefault(require("body-parser"));
 const connection_1 = __importDefault(require("./connection"));
 const response_1 = __importDefault(require("./response"));
+const expenseRoute_1 = __importDefault(require("./router/expenseRoute"));
 const app = (0, express_1.default)();
 const port = 3000;
 app.use(body_parser_1.default.json());
@@ -33,28 +34,36 @@ app.get("/expenses/:id", (req, res) => {
         console.log(`GET expense id = ${id}, OK!`);
     });
 });
-app.get("/expenses/total/category", (req, res) => {
-    const sql = "SELECT category, SUM (nominal) AS total_expense FROM expense GROUP BY category";
-    connection_1.default.query(sql, (err, result) => {
-        if (err) {
-            (0, response_1.default)(500, "Invalid data", "Server error", res);
-            console.log("SERVER ERROR");
-        }
-        (0, response_1.default)(200, result, `GET total expense data by category`, res);
-        console.log(`GET total expense grouped by category`);
-    });
+/* app.get("/expenses/total/category", (req: Request, res: Response) => {
+  const sql: string =
+    "SELECT category, SUM (nominal) AS total_expense FROM expense GROUP BY category";
+
+  db.query(sql, (err: QueryError, result: IExpense[]) => {
+    if (err) {
+      response(500, "Invalid data", "Server error", res);
+      console.log("SERVER ERROR");
+    }
+    response(200, result, `GET total expense data by category`, res);
+    console.log(`GET total expense grouped by category`);
+  });
 });
-app.get("/expenses/total/expense-date", (req, res) => {
-    const sql = "SELECT expense_date, SUM (nominal) AS total_expense FROM expense GROUP BY expense_date";
-    connection_1.default.query(sql, (err, result) => {
-        if (err) {
-            (0, response_1.default)(500, "Invalid data", "Server error", res);
-            console.log("SERVER ERROR");
-        }
-        (0, response_1.default)(200, result, `GET total expense data by date`, res);
-        console.log(`GET total expense grouped by date`);
-    });
-});
+
+app.get("/expenses/total/expense-date", (req: Request, res: Response) => {
+  const sql: string =
+    "SELECT expense_date, SUM (nominal) AS total_expense FROM expense GROUP BY expense_date";
+
+  db.query(sql, (err: QueryError, result: IExpense[]) => {
+    if (err) {
+      response(500, "Invalid data", "Server error", res);
+      console.log("SERVER ERROR");
+    }
+    response(200, result, `GET total expense data by date`, res);
+    console.log(`GET total expense grouped by date`);
+  });
+}); */
+// ALTERNATIVE FOR GET TOTAL EXPENSE BY CATEGORY & DATE
+// USING EXPRESS ROUTER
+app.use("/expenses/total", expenseRoute_1.default);
 app.post("/expenses", (req, res) => {
     const { name, nominal, category, expenseDate } = req.body;
     const sql = `INSERT INTO expense (name, nominal, category, expense_date) VALUES ('${name}', ${nominal}, '${category}', '${expenseDate}')`;

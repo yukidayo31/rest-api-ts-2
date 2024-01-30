@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import db from "./connection";
 import { QueryError, ResultSetHeader } from "mysql2";
 import response from "./response";
+import expenseRoute from "./router/expenseRoute";
 
 const app: Express = express();
 const port: number = 3000;
@@ -45,7 +46,7 @@ app.get("/expenses/:id", (req: Request, res: Response) => {
   });
 });
 
-app.get("/expenses/total/category", (req: Request, res: Response) => {
+/* app.get("/expenses/total/category", (req: Request, res: Response) => {
   const sql: string =
     "SELECT category, SUM (nominal) AS total_expense FROM expense GROUP BY category";
 
@@ -71,7 +72,11 @@ app.get("/expenses/total/expense-date", (req: Request, res: Response) => {
     response(200, result, `GET total expense data by date`, res);
     console.log(`GET total expense grouped by date`);
   });
-});
+}); */
+
+// ALTERNATIVE FOR GET TOTAL EXPENSE BY CATEGORY & DATE
+// USING EXPRESS ROUTER
+app.use("/expenses/total", expenseRoute);
 
 app.post("/expenses", (req: Request, res: Response) => {
   const { name, nominal, category, expenseDate } = req.body;
